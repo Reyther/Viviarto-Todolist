@@ -1,25 +1,28 @@
 <template>
   <v-row justify="center" align="center">
     <v-col cols="12" sm="8" md="6">
-      <v-btn rounded color="primary" dark @click="handleClick">
+      <v-btn rounded color="primary" dark @click="handleClick" class="mb-4">
        Add new Todo
       </v-btn>
-      <v-btn rounded color="error" dark @click="clearAll">
+      <v-btn rounded color="error" dark @click="clearAll" class="mb-4 ml-3">
        Delete All
       </v-btn>
         <v-alert v-if="todos.length === 0" dense color="primary" type="info">
           Aucune Todo sauvegardée
         </v-alert>
         <div v-else>
-          <v-card v-for="(todo, index) in todos" :key="index">
-            <v-card-title class="headline">
-              Todo list
-            </v-card-title>
-            <v-card-actions>
-              <v-btn rounded color="error" dark>
+          <v-card v-for="(todo, index) in todos" :key="index" class="mb-4">
+            <v-card-text>
+              <v-text-field v-model="todo.title" label="Title" :rules="rules"
+              ></v-text-field>
+              <v-textarea v-model="todo.description" label="Description" :rules="rules"
+              ></v-textarea>
+            </v-card-text>
+            <v-card-actions class="justify-end pb-3">
+              {{todo.date}}
+              <v-btn rounded color="error" dark @click="clearOne(index)" class="ml-3">
                 Delete
               </v-btn>
-              {{todo.date}}
             </v-card-actions>
           </v-card>
         </div>
@@ -54,6 +57,9 @@ export default {
     data() {
         return {
             todos: todoStorage.fetch(),
+            rules: [
+              value => !!value || 'Required.',
+            ],
         }
     },
     watch: {
@@ -68,8 +74,8 @@ export default {
         clearAll() {
             this.todos = [];
         },
-        clearOne() {
-            
+        clearOne(index) {
+            this.todos.splice(index,1);
         },
         handleClick() {
             this.todos.push({title:"", description:"", date:new Date().toLocaleString()});
